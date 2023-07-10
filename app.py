@@ -20,19 +20,27 @@ consoleHandler.setFormatter(logFormatter)
 logger = logging.getLogger(__name__)
 logger.addHandler(consoleHandler)
 
+
+from autometrics import autometrics
+
+
 @api.route('/')
+@autometrics
 def root_path():
     return jsonify({"message": "root path of the app"}), status.HTTP_200_OK
 
+@autometrics
 def _sleep():
     logger.info("sleeping ...")
     time.sleep(1)
 
+@autometrics
 def _roll_dice():
     logger.info("rolling dice ...")
     return random.randint(0, 9)
 
 @api.route('/roll')
+@autometrics
 def roll_path():
     _sleep()
     r = _roll_dice()
