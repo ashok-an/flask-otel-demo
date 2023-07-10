@@ -3,8 +3,10 @@ import time
 
 from flask import jsonify
 from flask_api import FlaskAPI, status
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
 
 api = FlaskAPI(__name__)
+FlaskInstrumentor().instrument_app(api)
 
 @api.route('/')
 def root_path():
@@ -28,5 +30,5 @@ def roll_path():
         return jsonify({"error": f"output=0"}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
 if __name__ == '__main__':
-    api.run(host='0.0.0.0', port=8080, debug=True)
+    api.run(host='0.0.0.0', port=8080, debug=True, use_reloader=False)
 
