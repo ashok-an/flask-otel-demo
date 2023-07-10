@@ -9,7 +9,10 @@ from opentelemetry.instrumentation.flask import FlaskInstrumentor
 api = FlaskAPI(__name__)
 FlaskInstrumentor().instrument_app(api)
 
-logFormatter = logging.Formatter(fmt=' %(asctime)s :: %(name)s :: %(levelname)s :: %(message)s')
+from opentelemetry.instrumentation.logging import LoggingInstrumentor
+LoggingInstrumentor().instrument(set_logging_format=True)
+
+logFormatter = logging.Formatter(fmt=' %(asctime)s :: service_name=%(otelServiceName)s :: [trace_id=%(otelTraceID)s span_id=%(otelSpanID)s] :: %(levelname)s :: trace_id%(message)s')
 consoleHandler = logging.StreamHandler()
 consoleHandler.setLevel(logging.INFO)
 consoleHandler.setFormatter(logFormatter)
