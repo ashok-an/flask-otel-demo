@@ -2,7 +2,7 @@ import logging
 import random
 import time
 
-from flask import jsonify
+from flask import jsonify, Response
 from flask_api import FlaskAPI, status
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 
@@ -22,7 +22,11 @@ logger.addHandler(consoleHandler)
 
 
 from autometrics import autometrics
+from prometheus_client import generate_latest
 
+@api.get("/metrics")
+def metrics():
+    return Response(generate_latest())
 
 @api.route('/')
 @autometrics
