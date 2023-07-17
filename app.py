@@ -5,9 +5,11 @@ import time
 from flask import jsonify, Response
 from flask_api import FlaskAPI, status
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
 
 api = FlaskAPI(__name__)
 FlaskInstrumentor().instrument_app(api)
+RequestsInstrumentor().instrument()
 
 from opentelemetry.instrumentation.logging import LoggingInstrumentor
 LoggingInstrumentor().instrument(set_logging_format=True)
@@ -19,7 +21,6 @@ consoleHandler.setFormatter(logFormatter)
 
 logger = logging.getLogger(__name__)
 logger.addHandler(consoleHandler)
-
 
 from autometrics import autometrics
 from prometheus_client import generate_latest
@@ -57,6 +58,12 @@ def roll_path():
     else:
         logger.critical(f"value:{r} unexpected")
         return jsonify({"error": f"output=0"}), status.HTTP_500_INTERNAL_SERVER_ERROR
+
+import xkcd
+@api.route('/xkcd')
+@autometrics
+def get_comic():
+    return xkcd.get_xkcd_comic()
 
 if __name__ == '__main__':
     api.run(host='0.0.0.0', port=8080, debug=True, use_reloader=False)
