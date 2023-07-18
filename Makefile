@@ -6,3 +6,8 @@ otel:
 
 locust:
 	locust -f locustfile.py --host http://127.0.0.1:8080 --users 100 --spawn-rate 2 --run-time 5m --headless --print-stats
+
+mongod:
+	-docker rm -f mongodb
+	docker run -d -p 27017:27017 --name mongodb mongo
+	docker ps | grep mongo
